@@ -1,4 +1,4 @@
-# Sistema de Agendamento - Salão de Beleza, em JAVA com API
+# Sistema de Tarefas #
 
 Projeto desenvolvido em Spring Boot para a disciplina Desenvolvimento de Software II.
 
