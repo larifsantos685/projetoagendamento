@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset='utf-8'>
+    <title>Tarefas </title>
+</head>
+<body>
+    <h1> Cadastrar </h1>
+    <input type="text" name='username' id="registerUsername" placeholder="Usuário">
+    <input type="password" name='password' id="registerPassword" placeholder="Senha">
+    <button onclick="register()"> Cadastrar </button>
+
+
+    <h1> Login </h1>
+    <input type="text" id="username" placeholder="Digite o usuário">
+    <input type="password" id="password" placeholder="Digite a senha">
+    <button onclick="login()"> Entrar </button>
+
+    <div id="taskSection" style="display:none;">
+    <h1> Tasks </h1>
+    <button onclick="getTasks()"> Listar Tarefas</button>
+    <ul id="taskList"> </ul>
+
+    <h2>Nova Task</h2>
+    <input type="text" id="newTaskTitle" placeholder="Título">
+    <button onclick="createTask()"> Criar Tarefa </button>
+    </div>
+        <script src='js/main.js'></script>
+</body>
+</html>

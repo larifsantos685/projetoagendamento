@@ -1,6 +1,5 @@
 package com.example.task_manager.controller;
 
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +18,8 @@ import jakarta.servlet.http.HttpSession;
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
-    
-    private TaskService taskService = new TaskService(); 
+
+    private TaskService taskService = new TaskService();
 
     @GetMapping
     public ResponseEntity<?> getAll(HttpSession session) {
@@ -33,16 +32,16 @@ public class TaskController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable int id, HttpSession session) {
         if (session.getAttribute("user") == null) {
-            return ResponseEntity.status(401).body("Usuário não autenticado."); 
+            return ResponseEntity.status(401).body("Usuário não autenticado.");
         }
-        Task task = taskService.get(id); 
-        if(task != null) {
-            return ResponseEntity.ok(task); 
+        Task task = taskService.get(id);
+        if (task != null) {
+            return ResponseEntity.ok(task);
         } else {
-           return ResponseEntity.notFound().build();
-        } 
+            return ResponseEntity.notFound().build();
+        }
     }
-  
+
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Task task, HttpSession session) {
         if (session.getAttribute("user") == null) {
@@ -60,11 +59,11 @@ public class TaskController {
         //Garante que o id da tarefa atualizada seja o mesmo do path
         updatedTask.setId(id);
         boolean updated = taskService.update(updatedTask);
-       if (updated) {
-    return ResponseEntity.ok(updatedTask);
-} else {
-    return ResponseEntity.notFound().build();
-}
+        if (updated) {
+            return ResponseEntity.ok(updatedTask);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")

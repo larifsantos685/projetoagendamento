@@ -4,14 +4,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.web.context.annotation.ApplicationScope;
+import org.springframework.stereotype.Service;
 
 import com.example.task_manager.classes.Task;
 
-@ApplicationScope
+@Service
 public class TaskService {
-    private static List<Task> tasks = new ArrayList<>();
-    private static int currentId = 1;
+    private final List<Task> tasks = new ArrayList<>();
+    private int currentId = 1;
 
     public TaskService() {}
 
@@ -23,18 +23,18 @@ public class TaskService {
 
     public List<Task> getAll() { return tasks; }
 
-    public Task get(Task task){
+    public Task get(Integer id) {
         for (Task t : tasks) {
-            if(t.equals(task)) {
+            if(t.getId().equals(id)) {
                 return t;
             }
         }
         return null;
     }
 
-    public Task get(Integer id){
-        return get(new Task(id));
-    }
+    // public Task get(Integer id){
+    //     return get(new Task(id));
+    // }
 
     @Override
     public String toString() {
@@ -44,7 +44,8 @@ public class TaskService {
     public boolean update(Task updatedTask) {
         for (int i = 0; i < tasks.size(); i++) {
             Task current = tasks.get(i);
-            if (current.equals(updatedTask)) {
+            if (current.getId().equals(updatedTask.getId())) {
+                  updatedTask.setDataCriada(current.getDataCriada());  // ✅ Mantém a data original
                 tasks.set(i, updatedTask);
                 return true;
             }
@@ -56,3 +57,4 @@ public class TaskService {
         return tasks.remove(new Task(id));
     }
 }
+
