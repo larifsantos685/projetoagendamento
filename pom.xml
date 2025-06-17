@@ -32,6 +32,8 @@
 	</scm>
 	<properties>
 		<java.version>17</java.version>
+		<maven.compiler.source>17</maven.compiler.source> 
+        <maven.compiler.target>17</maven.compiler.target>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -55,6 +57,24 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.45.1.0</version> 
+		</dependency>
+
+		<dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-community-dialects</artifactId>
+            <version>6.6.13.Final</version> <!-- Use 6.6.13.Final conforme seu erro -->
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -62,6 +82,26 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>3.2.5</version> <!-- Use uma versão compatível com Java 17, 3.2.5 é um bom ponto de partida -->
+                <configuration>
+					<jvm>C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.15.6-hotspot\\bin\\java.exe</jvm> 
+                    <argLine>
+                        --enable-preview <!-- Se estiver usando recursos de preview do Java 17 -->
+                        -Dmaven.compiler.forceJvmCompatible=true <!-- Força compatibilidade de JVM -->
+                        -Djava.util.logging.config.file=none <!-- Desabilita logging de Java, se causar interferência -->
+                        -Dsun.reflect.debugModuleAccessChecks=true <!-- Para debug de acesso a módulos, se necessário -->
+                        -Dsurefire.useFile=false <!-- Evita arquivos temporários que podem ser bloqueados -->
+                    </argLine>
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
+                    <!-- Adicionando um listener para imprimir o JAVA_HOME usado pelos testes -->
+                    <systemPropertyVariables>
+                        <user.home>${user.home}</user.home>
+                        <java.home>${java.home}</java.home> <!-- Isso vai nos dizer qual JRE/JDK está sendo usado -->
+                        <debug.output>true</debug.output>
+                    </systemPropertyVariables>
+                    
+                </configuration>
 			</plugin>
 		</plugins>
 	</build>

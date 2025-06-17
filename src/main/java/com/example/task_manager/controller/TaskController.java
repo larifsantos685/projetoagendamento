@@ -1,5 +1,6 @@
 package com.example.task_manager.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,21 +20,25 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/tasks")
 public class TaskController {
 
-    private TaskService taskService = new TaskService();
+    @Autowired
+    private TaskService taskService; 
+
+    // private TaskService taskService = new TaskService();
 
     @GetMapping
     public ResponseEntity<?> getAll(HttpSession session) {
-        if (session.getAttribute("user") == null) {
-            return ResponseEntity.status(401).body("Usuário não autenticado.");
-        }
+        // if (session.getAttribute("user") == null) {
+        //     return ResponseEntity.status(401).body("Usuário não autenticado.");
+        // }
         return ResponseEntity.ok(taskService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable int id, HttpSession session) {
+    public ResponseEntity<?> getById(@PathVariable Integer id, HttpSession session) {
         if (session.getAttribute("user") == null) {
             return ResponseEntity.status(401).body("Usuário não autenticado.");
         }
+
         Task task = taskService.get(id);
         if (task != null) {
             return ResponseEntity.ok(task);
@@ -44,20 +49,20 @@ public class TaskController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Task task, HttpSession session) {
-        if (session.getAttribute("user") == null) {
-            return ResponseEntity.status(401).body("Usuário não autenticado.");
-        }
+        // if (session.getAttribute("user") == null) {
+        //     return ResponseEntity.status(401).body("Usuário não autenticado.");
+        // }
         taskService.add(task);
         return ResponseEntity.ok(task);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable int id, @RequestBody Task updatedTask, HttpSession session) {
+    @PutMapping
+    public ResponseEntity<?> update(@RequestBody Task updatedTask, HttpSession session) {
         if (session.getAttribute("user") == null) {
             return ResponseEntity.status(401).body("Usuário não autenticado.");
         }
         //Garante que o id da tarefa atualizada seja o mesmo do path
-        updatedTask.setId(id);
+        // updatedTask.setId(id);
         boolean updated = taskService.update(updatedTask);
         if (updated) {
             return ResponseEntity.ok(updatedTask);
@@ -67,7 +72,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable int id, HttpSession session) {
+    public ResponseEntity<?> delete(@PathVariable Integer id, HttpSession session) {
         if (session.getAttribute("user") == null) {
             return ResponseEntity.status(401).body("Usuário não autenticado.");
         }

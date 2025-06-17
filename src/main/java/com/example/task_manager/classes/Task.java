@@ -1,13 +1,29 @@
 package com.example.task_manager.classes;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Task {
-
+    //Para o id ser criado automaticamente
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private String titulo;
     private String descricao;
+
+    @Enumerated(EnumType.STRING)
     private GrauUrgencia grauUrgencia;
+    
     private LocalDate dataCriada;
 
     public Task(){ }
@@ -58,19 +74,38 @@ public class Task {
     }
 
     
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    // @Override
+    // public boolean equals(Object o) {
+    //     if (this == o) return true;
+    //     if (o == null || getClass() != o.getClass()) return false;
 
-        Task task = (Task) o;
+    //     Task task = (Task) o;
 
-        return id != null && id.equals(task.id);
+    //     return id != null && id.equals(task.id);
+    // }
+
+    // @Override
+    // public int hashCode() {
+    //     return id != null ? id.hashCode() : 0;
+    // }
+
+     @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+        
+        Task other = (Task) obj;
+
+        return Objects.equals(id, other.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return Objects.hash(id);
     }
 
 }

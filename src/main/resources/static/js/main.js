@@ -57,16 +57,33 @@ function getTasks() {
             const list = document.getElementById('taskList');
             list.innerHTML = '';
             tasks.forEach(task => {
-                const item = document.createElement('li');
-                item.textContent = `#${task.id}: ${task.descricao}`;
-                list.appendChild(item);
+                const card = document.createElement('div');
+                card.className = 'card'
+                const formattedDate = task.dataCriada;
+
+                card.innerHTML = `
+                    <p class="heading">
+                        ${task.descricao}
+                    </p>
+                    <p>${formattedDate}</p>
+                    <p>${task.titulo}</p>
+                    <p>Urgência: ${task.grauUrgencia}</p> 
+                    <p>ID: ${task.id}</p> 
+                    <div class="card-actions">
+                        <button onclick="populateEditForm('${task.id}', '${task.titulo}', '${task.descricao}', '${task.grauUrgencia}', '${task.dataCriada}')">Editar</button>
+                        <button onclick="deleteTask('${task.id}')">Deletar</button>
+                    </div>
+                `;
+                list.appendChild(card);
             });
         }).catch(() => alert("Você precisa estar logado!"));
 }
 
 function createTask() {
     const title = document.getElementById('newTaskTitle').value;
-    const newTask = { id: 0, descricao: title };
+    const description = document.getElementById('newTaskDescription').value;
+    const grauUrgencia = document.getElementById('newTaskGrauUrgencia').value;
+    const newTask = { titulo: title, descricao: description, grauUrgencia: grauUrgencia };
 
     fetch('http://localhost:8080/tasks', {
         method: 'POST',
@@ -82,4 +99,133 @@ function createTask() {
                 alert("Erro ao criar task");
             }
         });
+}
+
+// Deletar
+function deleteTask(taskId) {
+    if (!confirm(`Tem certeza que deseja deletar a tarefa com ID ${taskId}?`)) {
+        return; // Cancela se o usuário não confirmar
+    }
+
+    fetch(`http://localhost:8080/tasks/${taskId}`, {
+        method: 'DELETE'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        alert(`Tarefa ${taskId} deletada com sucesso!`);
+        getTasks(); // Recarrega a lista de tarefas após a deleção
+    })
+    .catch(error => {
+        console.error('Erro ao deletar tarefa:', error);
+        alert('Erro ao deletar tarefa. Verifique o console.');
+    });
+}
+
+//Popular a nova task para editar
+function populateEditForm(id, titulo, descricao, grauUrgencia, dataCriada) {
+    // 1. Preenche os campos do formulário
+    document.getElementById('newTaskTitle').value = titulo;
+    document.getElementById('newTaskDescription').value = descricao;
+    document.getElementById('newTaskGrauUrgencia').value = grauUrgencia;
+    
+    // 2. Armazena o ID da tarefa que está sendo editada em um campo escondido
+    // Você precisará adicionar este input hidden ao seu HTML, perto do formulário "Nova Task":
+    // <input type="hidden" id="editTaskId">
+    const editTaskIdInput = document.getElementById('editTaskId');
+    if (editTaskIdInput) {
+        editTaskIdInput.value = id;
+    } else {
+        console.warn("Input com ID 'editTaskId' não encontrado. Adicione-o ao seu HTML para que a edição funcione corretamente.");
+    }
+
+    // 3. Muda o texto do botão de "Criar" para "Atualizar" e sua ação
+    const createTaskButton = document.querySelector('#taskSection button[onclick="createTask()"]');
+    if (createTaskButton) {
+        createTaskButton.textContent = 'Atualizar Tarefa';
+        createTaskButton.setAttribute('onclick', 'saveTask()'); // Muda para uma nova função saveTask
+    } else {
+        console.warn("Botão 'Criar Tarefa' não encontrado ou seletor incorreto.");
+    }
+
+    alert(`Editando tarefa: ${titulo}. Preencha os campos e clique em 'Atualizar Tarefa'.`);
+}
+
+// Editar / atualizar
+function saveTask() {
+    const editTaskIdInput = document.getElementById('editTaskId');
+    const taskId = editTaskIdInput ? editTaskIdInput.value : '';
+
+    const editTaskDataCriadaInput = document.getElementById('editTaskDataCriada'); // NOVO
+    const originalDataCriada = editTaskDataCriadaInput ? editTaskDataCriadaInput.value : ''; // NOVO
+
+    const titleInput = document.getElementById('newTaskTitle');
+    const descriptionInput = document.getElementById('newTaskDescription');
+    const urgencySelect = document.getElementById('newTaskGrauUrgencia');
+
+    const taskData = {
+        titulo: titleInput.value,
+        descricao: descriptionInput.value,
+        grauUrgencia: urgencySelect.value,
+    };
+
+    let url = "http://localhost:8080/tasks";
+    let method = 'POST';
+
+    if (taskId) { 
+        method = 'PUT';
+        taskData.id = parseInt(taskId); // Adiciona o ID ao corpo da requisição
+        taskData.dataCriada = originalDataCriada; // Inclui a data original no corpo
+    } else { // Se não há ID, é uma criação (POST)
+        taskData.dataCriada = new Date().toISOString().split('T')[0]; // Formato "YYYY-MM-DD"
+    }
+
+    fetch(url, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(taskData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        // Para PUT/POST que retornam a tarefa atualizada ou um status de sucesso
+        // Se seu PUT retornar 200 OK sem corpo, response.json() vai falhar.
+        // Apenas para POST que retorna a tarefa criada, return response.json() é útil.
+        // Para simplicidade, vamos verificar se há conteúdo para parsear.
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json();
+        } else {
+            return response.text(); // Retorna texto se não for JSON
+        }
+    })
+    .then(() => {
+        alert(`Tarefa ${taskId ? 'atualizada' : 'criada'} com sucesso!`);
+        // Limpa o formulário e reseta os IDs escondidos
+        titleInput.value = '';
+        descriptionInput.value = '';
+        urgencySelect.value = 'BAIXO';
+        if (editTaskIdInput) {
+            editTaskIdInput.value = ''; // Limpa o ID da tarefa em edição
+        }
+        if (editTaskDataCriadaInput) { // NOVO
+            editTaskDataCriadaInput.value = ''; // Limpa a data original em edição
+        }
+
+        // Reseta o botão de volta para "Criar Tarefa"
+        const createTaskButton = document.querySelector('#taskSection button[onclick="saveTask()"]');
+        if (createTaskButton) {
+            createTaskButton.textContent = 'Criar Tarefa';
+            createTaskButton.setAttribute('onclick', 'createTask()'); // Volta para a função original
+        }
+        getTasks(); // Recarrega a lista de tarefas
+    })
+    .catch(error => {
+        console.error(`Erro ao ${taskId ? 'atualizar' : 'criar'} tarefa:`, error);
+        alert(`Erro ao ${taskId ? 'atualizar' : 'criar'} tarefa. Verifique o console.`);
+    });
 }
