@@ -91,20 +91,22 @@ function getTasks() {
             list.innerHTML = '';
             tasks.forEach(task => {
                 const card = document.createElement('div');
-                card.className = 'card'
+                card.className = 'task'
                 const formattedDate = task.dataCriada;
 
                 card.innerHTML = `
-                    <p class="heading">
-                        ${task.descricao}
-                    </p>
-                    <p>${formattedDate}</p>
-                    <p>${task.titulo}</p>
-                    <p>Urgência: ${task.grauUrgencia}</p> 
-                    <p>ID: ${task.id}</p> 
+                    <div class="info-task">
+                        <p class="heading">
+                            ${task.descricao}
+                        </p>
+                        <p>${formattedDate}</p>
+                        <p>${task.titulo}</p>
+                        <p>Urgência: ${task.grauUrgencia}</p> 
+                        <p>ID: ${task.id}</p> 
+                    </div>
                     <div class="card-actions">
-                        <button onclick="populateEditForm('${task.id}', '${task.titulo}', '${task.descricao}', '${task.grauUrgencia}', '${task.dataCriada}')">Editar</button>
-                        <button onclick="deleteTask('${task.id}')">Concluir Tarefa</button>
+                        <button  class="button-add-task" onclick="populateEditForm('${task.id}', '${task.titulo}', '${task.descricao}', '${task.grauUrgencia}', '${task.dataCriada}')">Editar</button>
+                        <button  class="button-add-task" onclick="deleteTask('${task.id}')">Concluir Tarefa</button>
                     </div>
                 `;
                 list.appendChild(card);

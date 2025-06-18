@@ -33,6 +33,7 @@ img {
     width: 300px; 
     height: 40px; 
     padding-left: 10px; 
+    margin-bottom: 5px
 }
 .button-add-task {
     border: none; 
@@ -69,7 +70,8 @@ img {
     background-color: #F2F2F2; 
     box-shadow: 1px 4px 10px rgb(0, 0, 0, 0.2); 
     display: flex; 
-    height: 50px;
+    height: auto;
+    width: 90%;
     align-items: center; 
     justify-content: space-between;
     padding: 0 15px;  
@@ -79,10 +81,29 @@ img {
 
 
 }
+.heading {
+    font-weight: 600;
+    font-size: large
+}
 
 .task:hover img {
     opacity: 1; 
 
+}
+
+.info-task{
+    display: flex;
+    flex-direction: column
+}
+
+.card-actions{
+    display: flex;
+    flex-direction: column
+}
+
+.card-actions button{
+    width: 100%;
+    margin: 10px
 }
 
 .done { 
