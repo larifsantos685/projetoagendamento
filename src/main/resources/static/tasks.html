@@ -27,20 +27,20 @@
         <input type="hidden" id="editTaskId">
         <button onclick="createTask()"> Criar Tarefa </button>
     </div>
-    <button onclick="logout()">Sair</button>
+    <button onclick="logout()">Log-Out</button>
     <script>
         //Carregando o nome de usuário do localStorage para aparecer na tela
         window.addEventListener('DOMContentLoaded', () => {
-    const userName = localStorage.getItem('username');
-    if (userName) {
-        document.getElementById('userNameSpan').textContent = userName;
-        document.getElementById('taskSection').style.display = 'block';
-    } else {
-        // Caso não esteja logado, redireciona de volta para o login
-        alert("Sessão expirada. Faça login novamente.");
-        window.location.href = "login.html";
-    }
-});
+            const userName = localStorage.getItem('username');
+            if (userName) {
+                document.getElementById('userNameSpan').textContent = userName;
+                document.getElementById('taskSection').style.display = 'block';
+            } else {
+                // Caso não esteja logado, redireciona de volta para o login
+                alert("Sessão expirada. Faça login novamente.");
+                window.location.href = "login.html";
+            }
+        });
     </script>
 <script src="js/main.js"></script>
 </body>

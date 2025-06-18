@@ -27,9 +27,9 @@ public class TaskController {
 
     @GetMapping
     public ResponseEntity<?> getAll(HttpSession session) {
-        // if (session.getAttribute("user") == null) {
-        //     return ResponseEntity.status(401).body("Usuário não autenticado.");
-        // }
+        if (session.getAttribute("user") == null) {
+            return ResponseEntity.status(401).body("Usuário não autenticado.");
+        }
         return ResponseEntity.ok(taskService.getAll());
     }
 
@@ -49,9 +49,9 @@ public class TaskController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Task task, HttpSession session) {
-        // if (session.getAttribute("user") == null) {
-        //     return ResponseEntity.status(401).body("Usuário não autenticado.");
-        // }
+        if (session.getAttribute("user") == null) {
+            return ResponseEntity.status(401).body("Usuário não autenticado.");
+        }
         taskService.add(task);
         return ResponseEntity.ok(task);
     }

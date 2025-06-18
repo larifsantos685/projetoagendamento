@@ -42,7 +42,7 @@ function login() {
             isLoggedIn = true;
             
 
-            // Redireciona para a página de tarefas
+            // Redireciona para a pagina de tarefas
             window.location.href = "tasks.html";
         } else {
             alert("Erro ao logar");
@@ -53,6 +53,30 @@ function login() {
         alert("Erro ao tentar fazer login.");
     });
 
+}
+
+function logout(){
+    fetch('http://localhost:8080/users/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+    })
+    .then(response => {
+        if (response.ok) {
+            alert("Log out efetuado!");
+            localStorage.removeItem('username');
+            document.cookie = "sessionCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            isLoggedIn = false;
+            
+            // Redireciona para a pagina de login
+            window.location.href = "login.html";
+        } else {
+            alert("Erro ao logar");
+        }
+    })
+    .catch(error => {
+        console.error("Erro na requisição:", error);
+        alert("Erro ao tentar fazer login.");
+    });
 }
 
 function getTasks() {
@@ -80,7 +104,7 @@ function getTasks() {
                     <p>ID: ${task.id}</p> 
                     <div class="card-actions">
                         <button onclick="populateEditForm('${task.id}', '${task.titulo}', '${task.descricao}', '${task.grauUrgencia}', '${task.dataCriada}')">Editar</button>
-                        <button onclick="deleteTask('${task.id}')">Deletar</button>
+                        <button onclick="deleteTask('${task.id}')">Concluir Tarefa</button>
                     </div>
                 `;
                 list.appendChild(card);
@@ -113,7 +137,7 @@ function createTask() {
 // Deletar
 function deleteTask(taskId) {
     if (!confirm(`Tem certeza que deseja deletar a tarefa com ID ${taskId}?`)) {
-        return; // Cancela se o usuário não confirmar
+        return; // Cancela se o user não confirmar
     }
 
     fetch(`http://localhost:8080/tasks/${taskId}`, {
@@ -134,14 +158,11 @@ function deleteTask(taskId) {
 
 //Popular a nova task para editar
 function populateEditForm(id, titulo, descricao, grauUrgencia, dataCriada) {
-    // 1. Preenche os campos do formulário
     document.getElementById('newTaskTitle').value = titulo;
     document.getElementById('newTaskDescription').value = descricao;
     document.getElementById('newTaskGrauUrgencia').value = grauUrgencia;
     
-    // 2. Armazena o ID da tarefa que está sendo editada em um campo escondido
-    // Você precisará adicionar este input hidden ao seu HTML, perto do formulário "Nova Task":
-    // <input type="hidden" id="editTaskId">
+    // id indo pro input hidden = <input type="hidden" id="editTaskId">
     const editTaskIdInput = document.getElementById('editTaskId');
     if (editTaskIdInput) {
         editTaskIdInput.value = id;
@@ -149,7 +170,7 @@ function populateEditForm(id, titulo, descricao, grauUrgencia, dataCriada) {
         console.warn("Input com ID 'editTaskId' não encontrado. Adicione-o ao seu HTML para que a edição funcione corretamente.");
     }
 
-    // 3. Muda o texto do botão de "Criar" para "Atualizar" e sua ação
+    // texto do botão de "Criar" para "Atualizar"
     const createTaskButton = document.querySelector('#taskSection button[onclick="createTask()"]');
     if (createTaskButton) {
         createTaskButton.textContent = 'Atualizar Tarefa';
@@ -184,9 +205,9 @@ function saveTask() {
 
     if (taskId) { 
         method = 'PUT';
-        taskData.id = parseInt(taskId); // Adiciona o ID ao corpo da requisição
+        taskData.id = parseInt(taskId); // adiciona o ID ao corpo da requisição para edicao
         taskData.dataCriada = originalDataCriada; // Inclui a data original no corpo
-    } else { // Se não há ID, é uma criação (POST)
+    } else { // Se nao tem ID, é uma criação (POST)
         taskData.dataCriada = new Date().toISOString().split('T')[0]; // Formato "YYYY-MM-DD"
     }
 
@@ -201,37 +222,33 @@ function saveTask() {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        // Para PUT/POST que retornam a tarefa atualizada ou um status de sucesso
-        // Se seu PUT retornar 200 OK sem corpo, response.json() vai falhar.
-        // Apenas para POST que retorna a tarefa criada, return response.json() é útil.
-        // Para simplicidade, vamos verificar se há conteúdo para parsear.
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.indexOf("application/json") !== -1) {
             return response.json();
         } else {
-            return response.text(); // Retorna texto se não for JSON
+            return response.text(); // retorna texto se não for JSON
         }
     })
     .then(() => {
         alert(`Tarefa ${taskId ? 'atualizada' : 'criada'} com sucesso!`);
-        // Limpa o formulário e reseta os IDs escondidos
+        // limpa o formulário e reseta os IDs escondidos
         titleInput.value = '';
         descriptionInput.value = '';
         urgencySelect.value = 'BAIXO';
         if (editTaskIdInput) {
-            editTaskIdInput.value = ''; // Limpa o ID da tarefa em edição
+            editTaskIdInput.value = ''; // limpa o ID da tarefa em edição
         }
         if (editTaskDataCriadaInput) { // NOVO
-            editTaskDataCriadaInput.value = ''; // Limpa a data original em edição
+            editTaskDataCriadaInput.value = ''; // limpa a data original em edição
         }
 
         // Reseta o botão de volta para "Criar Tarefa"
         const createTaskButton = document.querySelector('#taskSection button[onclick="saveTask()"]');
         if (createTaskButton) {
             createTaskButton.textContent = 'Criar Tarefa';
-            createTaskButton.setAttribute('onclick', 'createTask()'); // Volta para a função original
+            createTaskButton.setAttribute('onclick', 'createTask()');
         }
-        getTasks(); // Recarrega a lista de tarefas
+        getTasks();
     })
     .catch(error => {
         console.error(`Erro ao ${taskId ? 'atualizar' : 'criar'} tarefa:`, error);
