@@ -26,9 +26,4 @@ public class LoginController {
         }
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<?>logout(HttpSession session){
-        session.invalidate();
-        return ResponseEntity.ok("Logout efetuado com sucesso.");
-    }
 }

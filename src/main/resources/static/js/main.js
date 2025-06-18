@@ -20,8 +20,13 @@ function register() {
         });
 }
 function login() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    if (!username || !password) {
+        alert("Por favor, preencha todos os campos.");
+        return;
+    }
 
     fetch('http://localhost:8080/users/login', {
         method: 'POST',
@@ -29,25 +34,29 @@ function login() {
         body: JSON.stringify({ username, password }),
         credentials: 'include'
     })
-        .then(response => {
-            if (response.ok) {
-                alert("Login efetuado!");
-                sessionCookie = document.cookie;
-                document.getElementById('taskSection').style.display = 'block';
-                isLoggedIn = true; 
-            } else {
-                alert("Erro ao logar");
-            }
-        });
+    .then(response => {
+        if (response.ok) {
+            alert("Login efetuado!");
+            localStorage.setItem('username', username);
+            sessionCookie = document.cookie;
+            isLoggedIn = true;
+            
+
+            // Redireciona para a página de tarefas
+            window.location.href = "tasks.html";
+        } else {
+            alert("Erro ao logar");
+        }
+    })
+    .catch(error => {
+        console.error("Erro na requisição:", error);
+        alert("Erro ao tentar fazer login.");
+    });
 
 }
 
 function getTasks() {
 
-    if (!isLoggedIn) {
-        alert("Você precisa estar logado!");
-        return;
-    }
     fetch('http://localhost:8080/tasks', {
         method: 'GET',
         credentials: 'include'
@@ -228,4 +237,5 @@ function saveTask() {
         console.error(`Erro ao ${taskId ? 'atualizar' : 'criar'} tarefa:`, error);
         alert(`Erro ao ${taskId ? 'atualizar' : 'criar'} tarefa. Verifique o console.`);
     });
+    
 }

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarefas</title>
+</head>
+<body>
+    <h1 id="welcomeTitle">Bem-vindo ao Gerenciador de Tarefas, <span id="userNameSpan"></span></h1>
+     <div id="taskSection" style="display:none;">
+        <h1> Tasks </h1>
+        <button onclick="getTasks()"> Listar Tarefas</button>
+        <div id="taskList"> 
+
+        </div>
+
+        <h2>Nova Task</h2>
+        <input type="text" id="newTaskTitle" placeholder="Título">
+        <textarea id="newTaskDescription" placeholder="Descricao"></textarea>
+        <select name="grauUrgencia" id="newTaskGrauUrgencia">
+            <option value="BAIXO">Baixo</option>
+            <option value="MEDIO">Medio</option>
+            <option value="ALTO">Alto</option>
+        </select>
+        
+        <!-- ADICIONE ESTE CAMPO ESCONDIDO PARA ARMAZENAR O ID DA TAREFA EM EDIÇÃO -->
+        <input type="hidden" id="editTaskId">
+        <button onclick="createTask()"> Criar Tarefa </button>
+    </div>
+    <button onclick="logout()">Sair</button>
+    <script>
+        //Carregando o nome de usuário do localStorage para aparecer na tela
+        window.addEventListener('DOMContentLoaded', () => {
+    const userName = localStorage.getItem('username');
+    if (userName) {
+        document.getElementById('userNameSpan').textContent = userName;
+        document.getElementById('taskSection').style.display = 'block';
+    } else {
+        // Caso não esteja logado, redireciona de volta para o login
+        alert("Sessão expirada. Faça login novamente.");
+        window.location.href = "login.html";
+    }
+});
+    </script>
+<script src="js/main.js"></script>
+</body>
+</html>

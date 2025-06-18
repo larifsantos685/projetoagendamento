@@ -70,9 +70,8 @@
 		</dependency>
 
 		<dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-community-dialects</artifactId>
-            <version>6.6.13.Final</version> <!-- Use 6.6.13.Final conforme seu erro -->
+			<groupId>org.hibernate.orm</groupId>
+			<artifactId>hibernate-community-dialects</artifactId>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>

@@ -1,16 +1,15 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
-    <meta charset='utf-8'>
-    <title>Tarefas </title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Login - Tarefas</title>
+     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <main id="form_container">
+<main id="form_container">
     <div id="form_header">
-        <h1 id="form_title">Cadastrar</h1>
-       
+        <h1 id="form_title">Login</h1>
     </div>
 
     <form id="form">
@@ -20,10 +19,10 @@
                 <div class="input-field">
                     <input
                         type="text"
+                        id="username"
                         name="username"
-                        id="registerUsername"
                         class="form-control"
-                        placeholder="Usuário" required
+                        placeholder="Digite o usuário"
                     >
                     <i class="fa-regular fa-user"></i>
                 </div>
@@ -34,13 +33,12 @@
                 <div class="input-field">
                     <input
                         type="password"
+                        id="password"
                         name="password"
-                        id="registerPassword"
                         class="form-control"
-                        placeholder="Senha"
-                        required
+                        placeholder="Digite a senha"
                     >
-                    <i class="fa-regular fa-user"></i>
+                    <i class="fa-regular fa-eye-slash password-icon"></i>
                 </div>
             </div>
         </div>
@@ -48,19 +46,16 @@
         <button
             class="btn-default"
             type="button"
-            onclick="register()"
+            onclick="login()"
         >
-            <i class="fa-solid fa-check"></i>
-            Cadastrar
+            <i class="fa-solid fa-right-to-bracket"></i>
+            Entrar
         </button>
 
         <p class="login-link">
-            Já se cadastrou? <a href="login.html">Faça login</a>
+            Ainda não tem conta? <a href="index.html">Cadastre-se</a>
         </p>
     </form>
-</main>
-
-
-    <script src='js/main.js'></script>
+<script src="js/main.js"></script>
 </body>
 </html>
